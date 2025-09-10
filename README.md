@@ -2,12 +2,12 @@
 
 ### Current todos
 
-``` bash todo_items_current  ```
+``` bash todo_items_current  ``` 
 
 
 ### Total todos added
 
-todo_items_added_total
+``` todo_items_added_total ```
 
 
 ### Total todos deleted
