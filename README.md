@@ -2,7 +2,9 @@
 
 ### Current todos
 
-``` bash todo_items_current  
+```
+bash todo_items_current
+```
 
 
 ### Total todos added
