@@ -12,7 +12,7 @@ todo_items_added_total
 
 ### Total todos deleted
 
-todo_items_deleted_total
+todo_items_deleted_total 
 
 
 ### Net change per minute
