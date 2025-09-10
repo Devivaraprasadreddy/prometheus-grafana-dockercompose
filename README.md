@@ -2,7 +2,7 @@
 
 ### Current todos
 
-<pre> ``` bash todo_items_current  </pre>
+``` bash todo_items_current  
 
 
 ### Total todos added
