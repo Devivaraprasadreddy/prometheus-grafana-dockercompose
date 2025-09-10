@@ -1,8 +1,8 @@
 1️⃣ Todo App Metrics
 
 ### Current todos
-
-todo_items_current
+<pre> ```bash
+todo_items_current ``` </pre>
 
 
 ### Total todos added
