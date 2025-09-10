@@ -1,0 +1,36 @@
+global:
+  scrape_interval: 5s           # scrape metrics every 5 seconds
+  evaluation_interval: 5s       # evaluate rules every 5 seconds
+  scrape_timeout: 2s
+
+# Alerting (optional)
+alerting:
+  alertmanagers: []
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self metrics
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Todo App metrics
+  - job_name: 'todo-app'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['todo-app:3000']
+    scrape_interval: 5s   # fast scrape for live updates
+
+  # Grafana metrics (optional)
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3001']
+
+# Optional: recording rules
+rule_files:
+  # - "rules.yml"  # Uncomment if you have alerting/recording rules

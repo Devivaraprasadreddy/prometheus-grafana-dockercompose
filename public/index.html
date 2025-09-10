@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reddy Daily Task App</title>
+  <style>
+    /* General */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    /* Container */
+    .container {
+      background: #fff;
+      margin-top: 50px;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      width: 400px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 26px;
+      text-shadow: 1px 1px 2px #ddd;
+    }
+
+    /* Input and Add Button */
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #007bff;
+      outline: none;
+      box-shadow: 0 0 8px rgba(0,123,255,0.3);
+    }
+
+    button.add-btn {
+      padding: 12px 25px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s, background-color 0.3s;
+    }
+
+    button.add-btn:hover {
+      background-color: #218838;
+      transform: scale(1.1);
+    }
+
+    /* Todo List */
+    ul#todo-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 0;
+    }
+
+    ul#todo-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f9f9f9;
+      padding: 12px 15px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      position: relative;
+      font-size: 16px;
+    }
+
+    ul#todo-list li:hover {
+      background-color: #e6f0ff;
+    }
+
+    /* Delete button */
+    button.delete-btn {
+      background-color: #dc3545;
+      border: none;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s, background-color 0.3s;
+    }
+
+    button.delete-btn:hover {
+      background-color: #a71d2a;
+      transform: scale(1.2);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    /* Emoji feedback */
+    .emoji {
+      position: absolute;
+      font-size: 24px;
+      opacity: 0;
+      pointer-events: none;
+      animation: floatUp 1s forwards;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
+    }
+
+    /* Delete animation */
+    .fly-away {
+      animation: flyAway 0.6s forwards;
+    }
+
+    @keyframes flyAway {
+      0% { opacity: 1; transform: translateX(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateX(200px) rotate(45deg); }
+    }
+
+    /* Confetti animation */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #ffcd3c;
+      opacity: 0.8;
+      pointer-events: none;
+      border-radius: 50%;
+      animation: fall 1s forwards;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(150px) rotate(720deg); opacity: 0; }
+    }
+
+    /* Icons next to tasks */
+    .task-icon {
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Reddy Daily Routines</h1>
+    <div class="input-group">
+      <input type="text" id="task" placeholder="Enter a task">
+      <button class="add-btn" onclick="addTodo()">Add ✅</button>
+    </div>
+    <ul id="todo-list"></ul>
+    <div class="footer">
+      Daily I Follow this 💪
+    </div>
+  </div>
+
+  <script>
+    async function loadTodos() {
+      const res = await fetch("/api/todos");
+      const todos = await res.json();
+      const list = document.getElementById("todo-list");
+      list.innerHTML = "";
+      todos.forEach(todo => {
+        const li = document.createElement("li");
+
+        // Add icon for fun
+        const icon = document.createElement("span");
+        icon.className = "task-icon";
+        icon.textContent = "📝";
+        li.appendChild(icon);
+
+        const text = document.createElement("span");
+        text.textContent = todo.task;
+        li.appendChild(text);
+
+        const btn = document.createElement("button");
+        btn.textContent = "Delete ❌";
+        btn.classList.add("delete-btn");
+        btn.onclick = () => deleteTodoAnimated(todo.id, li);
+
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+    }
+
+    async function addTodo() {
+      const taskInput = document.getElementById("task");
+      const task = taskInput.value;
+      if (task) {
+        await fetch("/api/todos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ task })
+        });
+        taskInput.value = "";
+        showEmoji("✅ Added!", taskInput);
+        spawnConfetti();
+        loadTodos();
+      }
+    }
+
+    async function deleteTodoAnimated(id, li) {
+      li.classList.add("fly-away");
+      await fetch("/api/todos/" + id, { method: "DELETE" });
+      setTimeout(() => li.remove(), 600);
+    }
+
+    function showEmoji(text, element) {
+      const emoji = document.createElement("div");
+      emoji.className = "emoji";
+      emoji.textContent = text;
+      const rect = element.getBoundingClientRect();
+      emoji.style.left = rect.left + rect.width / 2 + "px";
+      emoji.style.top = rect.top - 20 + "px";
+      document.body.appendChild(emoji);
+      setTimeout(() => emoji.remove(), 1000);
+    }
+
+    // Confetti effect
+    function spawnConfetti() {
+      for (let i = 0; i < 15; i++) {
+        const confetti = document.createElement("div");
+        confetti.className = "confetti";
+        confetti.style.left = Math.random() * window.innerWidth + "px";
+        confetti.style.backgroundColor = `hsl(${Math.random()*360}, 70%, 60%)`;
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 1000);
+      }
+    }
+
+    loadTodos();
+  </script>
+</body>
+</html>
