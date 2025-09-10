@@ -3,7 +3,7 @@
 ### Current todos
 
 ```
-bash todo_items_current
+ todo_items_current
 ```
 
 
