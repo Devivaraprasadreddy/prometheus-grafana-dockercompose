@@ -2,22 +2,22 @@
 
 ### Current todos
 
-``` bash todo_items_current  ``` 
+``` bash todo_items_current  
 
 
 ### Total todos added
 
-``` todo_items_added_total ```
+``` todo_items_added_total 
 
 
 ### Total todos deleted
 
-todo_items_deleted_total 
+``` todo_items_deleted_total 
 
 
 ### Net change per minute
 
-rate(todo_items_added_total[1m]) - rate(todo_items_deleted_total[1m])
+``` rate(todo_items_added_total[1m]) - rate(todo_items_deleted_total[1m])
 
 
 ### Total adds per minute
